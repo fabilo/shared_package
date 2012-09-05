@@ -25,6 +25,9 @@ class Current_Timelog_Form_Controller extends Base_Auth_Controller {
 		else {
 			$this->_timelog = new Timelog();
 		}
+		
+		// add timelog form to global view vars
+		$this->_view_globals['current_timelog_form'] = $this->getTimelogSidebarFormHtml($this->_timelog);
 	}
 	
 	/** 
@@ -37,44 +40,20 @@ class Current_Timelog_Form_Controller extends Base_Auth_Controller {
 			'projects' => $this->_user->getVisibleProjects(new Project_Factory($this->_admin_db)), 
 			'categories' => $this->_user->getVisibleTimelogCategories(new Timelog_Categories_Factory($this->_admin_db))
 		);
-		$this->display('timelog/form', $data, $returnHtml);
+		$this->display('timelog/form', $data, array('return_html'=>true));
 	}
 	
 	/**
-	 * Get current timelog object that will be displayed in side form
+	 * 	Get HTML for timelog form in sidebar
+	 *
+	 *	@param Timelog $timelog - Timelog object to display in form
 	 */
-	protected function getCurrentTimelog() {
-		
-	}
-	
-	/**
-	 *	Display view in layout (or without if ajax request)
-	 *	Uses CI view helper 
-	 *	@param String $view - name of view to display
-	 *	@param Array $data - array of data to render with view
-	 */
-	protected function display($view, $data) {
-		$data['ajax'] = $this->_isAjax; // whether request is an ajax request or not
-		$data['top_uri'] = site_url($this->_uri_segment); // this current controller name (eg: timelogs)
-		$data['base_uri'] = site_url(); // base url (eg: http://admin)
-		
-		if ($this->_isAjax) {
-			// ajax submission, don't display layout
-			$this->load->view($view, $data);
-		}
-		else {
-			
-			// standard request wrap view in layout
-			$data['current_timelog_form'] = $this->load->view('timelog/form', array_merge($data, array(
-				'timelog'=> $this->_timelog, 
-				'projects' => $this->_user->getVisibleProjects(new Project_Factory($this->_admin_db)), 
-				'categories' => $this->_user->getVisibleTimelogCategories(new Timelog_Categories_Factory($this->_admin_db)),
-				'ajax'=>1
-			)), true);
-			
-
-			$body = $this->load->view($view, $data, true);
-			$this->load->view($this->_layout_view, array('body' => $body));
-		}
+	protected function getTimelogSidebarFormHtml(timelog $timelog) {
+		return $this->load->view('timelog/form', array_merge($this->_view_globals, array(
+			'timelog'=> $timelog, 
+			'projects' => $this->_user->getVisibleProjects(new Project_Factory($this->_admin_db)), 
+			'categories' => $this->_user->getVisibleTimelogCategories(new Timelog_Categories_Factory($this->_admin_db)),
+			'ajax'=>1
+		)), true);
 	}
 }
