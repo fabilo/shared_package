@@ -27,33 +27,25 @@ class Current_Timelog_Form_Controller extends Base_Auth_Controller {
 		}
 		
 		// add timelog form to global view vars
-		$this->_view_globals['current_timelog_form'] = $this->getTimelogSidebarFormHtml($this->_timelog);
+		$this->_view_globals['current_timelog_form'] = $this->displayTimelogForm($this->_timelog, true, true);
 	}
-	
+
 	/** 
 	 *	Display form for a timelog
 	 *	@var $timelog (timelog class) - timelog to put into the form
+	 *	@var $sidebar_form boolean - whether or not the timelog form is for the sidebar
+	 *	@var $return_html boolean - whether to return html or display it
 	 */
-	private function displayTimelogForm(timelog $timelog, $returnHtml = false) {
+	protected function displayTimelogForm(timelog $timelog, $sidebar_form=false, $return_html=false) {
 		$data = array(
 			'timelog' => $timelog,
 			'projects' => $this->_user->getVisibleProjects(new Project_Factory($this->_admin_db)), 
-			'categories' => $this->_user->getVisibleTimelogCategories(new Timelog_Categories_Factory($this->_admin_db))
+			'categories' => $this->_user->getVisibleTimelogCategories(new Timelog_Categories_Factory($this->_admin_db)), 
+			'sidebar_form' => $sidebar_form
 		);
-		$this->display('timelog/form', $data, array('return_html'=>true));
-	}
-	
-	/**
-	 * 	Get HTML for timelog form in sidebar
-	 *
-	 *	@param Timelog $timelog - Timelog object to display in form
-	 */
-	protected function getTimelogSidebarFormHtml(timelog $timelog) {
-		return $this->load->view('timelog/form', array_merge($this->_view_globals, array(
-			'timelog'=> $timelog, 
-			'projects' => $this->_user->getVisibleProjects(new Project_Factory($this->_admin_db)), 
-			'categories' => $this->_user->getVisibleTimelogCategories(new Timelog_Categories_Factory($this->_admin_db)),
-			'ajax'=>1
-		)), true);
+		if ($return_html)
+			return $this->display('timelog/form', $data, array('return_html' => 1));
+		else 
+			$this->display('timelog/form', $data);
 	}
 }

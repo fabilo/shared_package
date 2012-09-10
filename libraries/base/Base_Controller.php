@@ -33,9 +33,10 @@ class Base_Controller extends CI_Controller {
 		// parameter array takes precidence over globals if array keys match 
 		$data = array_merge($this->_view_globals, $data);
 		
-		if (isset($options['return_html']) && $options['return_html'] === true) {
+		if (isset($options['return_html']) && $options['return_html']) {
 			// return html
-			return $this->load->view($view, $data, true);
+			$html = $this->load->view($view, $data, true);
+			return $html;
 		}
 		elseif ($this->_isAjax) {
 			// ajax submission output to browser without layout view

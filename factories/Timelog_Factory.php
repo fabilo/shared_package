@@ -24,7 +24,9 @@ class Timelog_Factory extends Base_PDO_Factory {
 			WHERE '.self::$_table_name.'.id = ?'
 		);
 		$smt->execute(array($id));
-		$timelog = $smt->fetchObject(self::$_fetch_class);
+		if (!$timelog = $smt->fetchObject(self::$_fetch_class)) {
+			throw new Exception('Timelog not found.');
+		}
 		
 		// check user owns timelog
 		if ($timelog->getUserId() != $this->_user_id) throw new Exception('Permission denied to access timelog object with id: '.$id);
@@ -103,8 +105,8 @@ class Timelog_Factory extends Base_PDO_Factory {
 		return $smt->fetchAll(PDO::FETCH_CLASS, self::$_fetch_class);
 	}
 	
-	/** Get timelogs for a date
-	 *
+	/** 
+	 * Get timelogs for a date
 	 */
 	public function getForDate($date, $user_id=null) {
 		// default user_id to current user
@@ -119,5 +121,18 @@ class Timelog_Factory extends Base_PDO_Factory {
 			
 		$smt->execute(array($user_id, $date));
 		return $smt->fetchAll(PDO::FETCH_CLASS, self::$_fetch_class);
+	}
+	
+	/**
+	 *  Delete timelog
+	 *	@var $id int - id for timelog record
+	 */
+	public function delete($id) {
+		// try get timelog - restricted by user
+		$timelog = $this->getById($id); 
+		
+		// delete timelog 
+		$smt = $this->_db->prepare("DELETE FROM ".self::$_table_name." WHERE id = ?");
+		return $smt->execute(array($id));
 	}
 }
