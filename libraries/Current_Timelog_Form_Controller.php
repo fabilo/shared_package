@@ -42,7 +42,8 @@ class Current_Timelog_Form_Controller extends Base_Auth_Controller {
 			'timelog' => $timelog,
 			'projects' => $this->_user->getVisibleProjects(new Project_Factory($this->_admin_db)), 
 			'categories' => $this->_user->getVisibleTimelogCategories(new Timelog_Categories_Factory($this->_admin_db)), 
-			'sidebar_form' => $sidebar_form
+			'sidebar_form' => $sidebar_form,
+			'heading' => ($timelog->isNew()) ? 'Add Timelog' : 'Edit Timelog'
 		);
 		if ($return_html)
 			return $this->display('timelog/form', $data, array('return_html' => 1));

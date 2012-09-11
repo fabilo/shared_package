@@ -44,8 +44,13 @@ class Base_Controller extends CI_Controller {
 		}
 		else {
 			// standard request wrap view in layout
-			$body = $this->load->view($view, $data, true);
-			$this->load->view($this->_layout_view, array('body' => $body));
+			$layout_data = array(
+				'body' => $this->load->view($view, $data, true)
+			);
+			if (isset($data['heading'])) $layout_data['heading'] = $data['heading'];
+			if (isset($data['page_heading'])) $layout_data['page_heading'] = $data['page_heading'];
+			
+			$this->load->view($this->_layout_view, $layout_data);
 		}
 	}
 }
