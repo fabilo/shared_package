@@ -1,7 +1,7 @@
 <?php
 class Base_PDO_Factory {
 	protected $_db; 
-	protected static $_table_name;
+	public static $_table_name;
 
 	public function __construct($db) {		
 		// setup db object 

@@ -1,13 +1,33 @@
 <?php
 
 class User extends AbstractEntity implements User_Interface {
+	protected $team_id,
+		$department_id;
 	
+	public function __construct() {
+		switch ($_SERVER['REMOTE_ADDR']) {
+			default: 
+				case '10.56.195.54': 
+					$this->team_id = 2;
+					$this->department_id = 1;
+					$this->id = 1;
+					break;
+				case '10.56.195.5': 
+					$this->team_id = 1;
+					$this->department_id = 1;
+					$this->id = 2;
+					break;
+				die('Unauthorized user!');
+				break;
+		}
+	}
+
 	/** Get ID for user 
 	 *
 	 *	@return int - id
 	 */
 	public function getId() {
-		return 1;
+		return $this->id;
 	}
 	
 	/** Get ID for user's current team 
@@ -15,7 +35,7 @@ class User extends AbstractEntity implements User_Interface {
 	 *	@return int - id
 	 */
 	public function getTeamId() {
-		return 1;
+		return $this->team_id;
 	}
 	
 	/** Get ID for user's current department 
@@ -23,7 +43,7 @@ class User extends AbstractEntity implements User_Interface {
 	 *	@return int - id
 	 */
 	public function getDepartmentId() {
-		return 1;
+		return $this->department_id;
 	}
 	
 	/** Get all projects visible to user
