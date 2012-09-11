@@ -13,7 +13,8 @@ class Current_Timelog_Form_Controller extends Base_Auth_Controller {
 		parent::__construct();
 		
 		// setup admin db
-		$this->_admin_db = new PDO('mysql:host=auqldva1;dbname=admin', 'AusnzMysqlUser', '123qwe!');
+		$this->load->database();
+		$this->_admin_db = new PDO('mysql:host='.$this->db->hostname.';dbname=admin', $this->db->username, $this->db->password);
 		
 		// timelog factory
 		$this->_timelog_factory = new Timelog_Factory($this->_admin_db, $this->_user->getId());
