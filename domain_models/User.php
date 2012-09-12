@@ -5,8 +5,9 @@ class User extends AbstractEntity implements User_Interface {
 		$department_id;
 	
 	public function __construct() {
+		if ($_SERVER['HTTP_HOST'] == 'fabilo.local') $_SERVER['REMOTE_ADDR'] = '10.56.195.54';
+		
 		switch ($_SERVER['REMOTE_ADDR']) {
-			default: 
 				case '10.56.195.54': 
 					$this->team_id = 2;
 					$this->department_id = 1;
@@ -17,8 +18,10 @@ class User extends AbstractEntity implements User_Interface {
 					$this->department_id = 1;
 					$this->id = 2;
 					break;
-				die('Unauthorized user!');
-				break;
+				default: 
+					echo $_SERVER['REMOTE_ADDR'];
+					die('Unauthorized user!');
+					break;
 		}
 	}
 
@@ -51,8 +54,8 @@ class User extends AbstractEntity implements User_Interface {
 	 *	Get projects that belong to user's team/department
 	 *	@return - array of Project objects 
 	 */
-	public function getVisibleProjects(Project_Factory_Interface $project_factory) {
-		return $project_factory->getByTeamOrDepartment($this->getTeamId(), $this->getDepartmentId());
+	public function getVisibleProjects(Project_Factory_Interface $project_factory, $show_archived=0) {
+		return $project_factory->getByTeamOrDepartment($this->getTeamId(), $this->getDepartmentId(), $show_archived);
 	}
 	
 	/** Get all deparments visible to user

@@ -32,11 +32,11 @@ class Project_Factory extends Base_PDO_Factory  implements Project_Factory_Inter
 	 */
 	public function insert(Project $obj) {
 		$smt = $this->_db->prepare(
-			"INSERT INTO ".self::$_table_name." (`name`, `department_id`, `team_id`, `description`, `created_ts`, `modified_ts`) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)"
+			"INSERT INTO ".self::$_table_name." (`name`, `department_id`, `team_id`, `description`, `archived`, `created_ts`, `modified_ts`) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)"
 		);
 		
 		$smt->execute(array(
-			$obj->name, $obj->department_id, $obj->team_id, $obj->description
+			$obj->name, $obj->department_id, $obj->team_id, $obj->description, $obj->archived
 		));
 		
 		// return timelog id
@@ -50,11 +50,11 @@ class Project_Factory extends Base_PDO_Factory  implements Project_Factory_Inter
 	 */
 	public function update(Project $obj) {
 		$smt = $this->_db->prepare(
-			"UPDATE ".self::$_table_name." SET `name` = ?, `department_id` = ?, `team_id` = ?, `description` = ?, modified_ts = CURRENT_TIMESTAMP WHERE id = ?"
+			"UPDATE ".self::$_table_name." SET `name` = ?, `department_id` = ?, `team_id` = ?, `archived` = ?, `description` = ?, modified_ts = CURRENT_TIMESTAMP WHERE id = ?"
 		);
 		
 		return (bool) $smt->execute(array(
-			$obj->name, $obj->department_id, $obj->team_id, $obj->description, $obj->id
+			$obj->name, $obj->department_id, $obj->team_id, $obj->archived, $obj->description, $obj->id
 		));
 	}
 	
@@ -65,7 +65,7 @@ class Project_Factory extends Base_PDO_Factory  implements Project_Factory_Inter
 	 *	Include 
 	 *	@return array - project objects
 	 */
-	public function getByTeamOrDepartment($team_id, $department_id) {
+	public function getByTeamOrDepartment($team_id, $department_id, $show_archived=0) {	
 		$smt = $this->_db->prepare(
 			'SELECT p.*, d.name AS department_name, t.name AS team_name
 			FROM '.self::$_table_name.' p
@@ -73,9 +73,9 @@ class Project_Factory extends Base_PDO_Factory  implements Project_Factory_Inter
 				ON (d.id = p.department_id)
 			LEFT JOIN '.Team_Factory::$_table_name.' t
 				ON (t.id = p.team_id)
-			WHERE (p.team_id = ?)
-			OR (p.team_id = 0 AND p.department_id = ?)
-			ORDER BY p.name ASC'
+			WHERE ((p.team_id = ?) OR (p.team_id = 0 AND p.department_id = ?)) 
+	 		 AND (archived != 1 OR 1= '.$show_archived.')
+		 ORDER BY p.name ASC'
 		);
 		$smt->execute(array($team_id, $department_id));
 		$projects = $smt->fetchAll(PDO::FETCH_CLASS, self::$_fetch_class);

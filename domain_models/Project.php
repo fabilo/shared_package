@@ -6,6 +6,7 @@ class Project extends AbstractEntity {
 	protected $name, 
 		$department_id = 0, 
 		$team_id = 0, 
+		$archived = 0,
 		$description; 
 
 	// local objects
@@ -21,14 +22,4 @@ class Project extends AbstractEntity {
 		if (!preg_match('/^\d+$/', $this->team_id)) throw new Invalid_Input_Exception('Invalid team_id set for Project');
 		return true;
 	}
-
-/*
-	public function getDepartment() {
-		return 'I.T';
-	}
-
-	public function getTeam() {
-		return 'Development';
-	}
-*/
 }
