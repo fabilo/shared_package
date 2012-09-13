@@ -135,4 +135,60 @@ class Timelog_Factory extends Base_PDO_Factory {
 		$smt = $this->_db->prepare("DELETE FROM ".self::$_table_name." WHERE id = ?");
 		return $smt->execute(array($id));
 	}
+	
+	/**
+	 * Get total amount of hours for a week
+	 */
+	public function getTotalHoursForWeek($start_week, $end_week=null) {
+		// query params 
+		$params = array(
+			$this->_user_id
+		);
+		
+		// check if end_week argument was passed
+		if ($end_week) {
+			// end week argument was passed 
+			$where = "DATE_FORMAT(date, '%v') >= ? AND DATE_FORMAT(date, '%v') <= ?";
+			// add to query params array
+			$params[]= (int) $start_week; 
+			$params[]= (int) $end_week;
+		}
+		else {
+			// no end_week paramter value, 
+			$where = "DATE_FORMAT(date, '%v') = ?";
+			// add to query params array 
+			$params[]= (int) $start_week;
+		}
+		
+		// prepare query
+		$smt = $this->_db->prepare("
+			SELECT SUM(hours) AS hours 
+			FROM ".self::$_table_name."
+			WHERE user_id = ? 
+			AND ".$where."
+			GROUP BY DATE_FORMAT(date, '%v')
+			ORDER BY date DESC
+		");
+			
+		$smt->execute($params);
+		return $smt->fetchColumn();
+	}
+	
+	public function getDayTotalsByWeek($week, $year=null) {
+		// default year to now
+		if (!$year) $year = date('Y');
+		$time = strtotime("1 January $year", time());
+		
+		// get start day & end day for week
+		$time += ((7*$week))*24*3600;
+		$end_date = date('Y-m-d', $time);
+		$start_date = date('Y-m-d', ($time-(6*86400)));		
+		
+		$result = $this->getDayTotalsByDateRange($start_date, $end_date);
+		
+		die(print_r($result));
+	}
 }
+
+
+
