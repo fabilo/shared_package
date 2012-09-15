@@ -4,6 +4,11 @@ class Base_Controller extends CI_Controller {
 	protected $_uri_segment = ''; // url segment for this controller url
 	protected $_isAjax;
 	protected $_view_globals = array();
+	protected $_meta_title;
+	protected $_heading; 
+	protected $_body;
+	protected $_javascript_includes = array();
+	protected $_flash_messages = array();
 
 	public function __construct() {
 		parent::__construct();
@@ -20,6 +25,11 @@ class Base_Controller extends CI_Controller {
 			'top_uri' => site_url($this->_uri_segment), // this current controller name (eg: timelogs)
 			'base_uri' => dirname(site_url()).'/' // base url (eg: http://admin)
 		);
+		
+		// get flash messages from previous request
+		if (isset($_SESSION['flash_messages'])) $this->_flash_messages = $_SESSION['flash_messages'];
+		// clear session of flash messages redy to add new
+		$_SESSION['flash_messages'] = array();
 	}
 	
 	/**
@@ -33,12 +43,7 @@ class Base_Controller extends CI_Controller {
 		// parameter array takes precidence over globals if array keys match 
 		$data = array_merge($this->_view_globals, $data);
 		
-		if (isset($options['return_html']) && $options['return_html']) {
-			// return html
-			$html = $this->load->view($view, $data, true);
-			return $html;
-		}
-		elseif ($this->_isAjax) {
+		if ($this->_isAjax) {
 			// ajax submission output to browser without layout view
 			$this->load->view($view, $data);
 		}
@@ -52,6 +57,37 @@ class Base_Controller extends CI_Controller {
 			
 			$this->load->view($this->_layout_view, $layout_data);
 		}
+	}
+	
+	protected function display2() {
+		// setup view variables
+		$data = $this->_view_globals;
+		// meta title for html page
+		$data['meta_title'] = $this->_meta_title;
+		// heading for page to be displayed at top of view
+		$data['heading'] = $this->_heading;
+		// body to displayed in the layout view
+		$data['body'] = $this->_body; 
+		
+		// check for javascript file includes
+		$data['javascript_includes'] = $this->_javascript_includes;
+		
+		$this->load->view($this->_layout_view, $data);
+	}	
+	
+	/**
+	 * Add message to flash_messages session variable
+	 */
+	protected function flash_message($message) {
+		$message = trim($message);
+		// check message isn't empty
+		if (empty($message)) return false; 
+		// add message
+		$_SESSION['flash_messages'][]= $message;
+	}
+	
+	protected function get_flash_messages() {
+		return $this->_flash_messages;
 	}
 }
 ?>

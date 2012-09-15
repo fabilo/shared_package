@@ -40,6 +40,12 @@ class Timelog extends AbstractEntity {
 		$mins = substr($time, -2);
 		return mktime((float)$hrs, (float)$mins);
 	}
+	
+	public function getDateNice() {
+		$date = substr(date('D', strtotime($this->date)),0,1);
+		$date .= ' '.date('d/m', strtotime($this->date));
+		return $date;
+	}
 		
 	public function setStartTime($time) {
 		$this->start_time = $this->sanatizeTime($time);

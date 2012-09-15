@@ -6,8 +6,8 @@
 require_once('libraries/base/Base_Auth_Controller.php');
 
 class Current_Timelog_Form_Controller extends Base_Auth_Controller {
-	protected $_admin_db, 
-		$_timelog_factory;
+	protected $_timesheet, 
+		$_admin_db;
 	
 	public function __construct() {
 		parent::__construct();
@@ -15,39 +15,29 @@ class Current_Timelog_Form_Controller extends Base_Auth_Controller {
 		// setup admin db
 		$this->load->database();
 		$this->_admin_db = new PDO('mysql:host='.$this->db->hostname.';dbname=admin', $this->db->username, $this->db->password);
-		
-		// timelog factory
+		// define timelog factory
 		$this->_timelog_factory = new Timelog_Factory($this->_admin_db, $this->_user->getId());
+		
+		// setup timesheet object
+		$this->_timesheet = new Timesheet( 
+			$this->_timelog_factory,
+			new Project_Factory($this->_admin_db), 
+			new Timelog_Categories_Factory($this->_admin_db),
+			$this->_user
+		);
+		$this->_timesheet->_view_globals = $this->_view_globals;
 		
 		// check for timelog in session 
 		if (isset($_SESSION['current_timelog']) && $timelog = $_SESSION['current_timelog']) {
-			$this->_timelog = $timelog; 
+
 		}
 		else {
-			$this->_timelog = new Timelog();
+			$timelog = new Timelog();
 		}
 		
 		// add timelog form to global view vars
-		$this->_view_globals['current_timelog_form'] = $this->displayTimelogForm($this->_timelog, true, true);
-	}
-
-	/** 
-	 *	Display form for a timelog
-	 *	@var $timelog (timelog class) - timelog to put into the form
-	 *	@var $sidebar_form boolean - whether or not the timelog form is for the sidebar
-	 *	@var $return_html boolean - whether to return html or display it
-	 */
-	protected function displayTimelogForm(timelog $timelog, $sidebar_form=false, $return_html=false) {
-		$data = array(
-			'timelog' => $timelog,
-			'projects' => $this->_user->getVisibleProjects(new Project_Factory($this->_admin_db)), 
-			'categories' => $this->_user->getVisibleTimelogCategories(new Timelog_Categories_Factory($this->_admin_db)), 
-			'sidebar_form' => $sidebar_form,
-			'heading' => ($timelog->isNew()) ? 'Add Timelog' : 'Edit Timelog'
-		);
-		if ($return_html)
-			return $this->display('timelog/form', $data, array('return_html' => 1));
-		else 
-			$this->display('timelog/form', $data);
+		$this->_view_globals['current_timelog_form'] = $this->_timesheet->getTimelogFormHtml($timelog, array('sidebar_form'=>true));
+		// include form.js for sidebar form
+		$this->_javascript_includes[]= 'timelog_form';
 	}
 }
