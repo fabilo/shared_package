@@ -179,6 +179,9 @@ class Timelog_Factory extends Base_PDO_Factory {
 		return $smt->fetchColumn();
 	}
 	
+	/**
+	 * 
+	 */
 	public function getDayTotalsByWeek($week, $year=null) {
 		// default year to now
 		if (!$year) $year = date('Y');
@@ -192,6 +195,56 @@ class Timelog_Factory extends Base_PDO_Factory {
 		$result = $this->getDayTotalsByDateRange($start_date, $end_date);
 		
 		die(print_r($result));
+	}
+	
+	/**
+	 * Get total hours per day for each project larity name
+	 *	@param int year - year to get timelogs for
+	 *	@param int week - week to get timelogs for
+	 *	@return array of rowsets for the result
+	 */
+	public function getCategoryHoursForClarity($year, $week) {
+		$smt = $this->_db->prepare("
+			SELECT timelogs.date, SUM(timelogs.hours) AS hours, IFNULL(projects.name, timelog_categories.name) AS category
+			FROM timelogs
+			LEFT JOIN projects ON projects.id = timelogs.project_id
+			LEFT JOIN timelog_categories ON timelog_categories.id = timelogs.category_id
+			WHERE user_id = ?
+			AND YEAR(date) = ?
+			AND WEEK(date) = ?
+			GROUP BY date, category
+			ORDER BY date, category
+		");
+		$smt->execute(array(
+			$this->_user_id,
+			$year, 
+			$week
+		));
+		return $smt->fetchAll();		
+	}
+	
+	/**
+	 * Get total hours per day
+	 *	@param int year - year to get timelogs for
+	 *	@param int week - week to get timelogs for
+	 *	@return array of rowsets for the result
+	 */
+	public function getTotalHoursPerDay($year, $week) {
+		$smt = $this->_db->prepare("
+			SELECT timelogs.date, SUM(timelogs.hours) AS hours
+			FROM timelogs
+			WHERE user_id = ?
+			AND YEAR(date) = ?
+			AND WEEK(date) = ?
+			GROUP BY date
+			ORDER BY date
+		");
+		$smt->execute(array(
+			$this->_user_id,
+			$year, 
+			$week
+		));
+		return $smt->fetchAll();		
 	}
 }
 

@@ -7,7 +7,8 @@ require_once('libraries/base/Base_Auth_Controller.php');
 
 class Current_Timelog_Form_Controller extends Base_Auth_Controller {
 	protected $_timesheet, 
-		$_admin_db;
+		$_admin_db, 
+		$_timelog_factory;
 	
 	public function __construct() {
 		parent::__construct();

@@ -1,10 +1,9 @@
 <?php
-class Timesheet {
+class Timesheet extends Base_Render_Library {
 	protected $_timelog_factory, 
 		$_project_factory, 
 		$_timelog_categories_factory, 
 		$_user;
-	public $_view_globals;
 	
 	public function __construct($timelog_factory, $project_factory, $timelog_categories_factory, $user) {
 		$this->_timelog_factory = $timelog_factory;
@@ -23,7 +22,7 @@ class Timesheet {
 		if (!$year) $year = Date('Y');
 		
 		// get start and end dates for week
-		$week_range_dates = $this->getRangeDatesForWeek($week, $year);
+		$week_range_dates = self::getRangeDatesForWeek($week, $year);
 		
 		// get total hours for week html
 		$week_hours = $this->_timelog_factory->getTotalHoursForWeek($year, $week);
@@ -94,7 +93,7 @@ class Timesheet {
 	 *	@return array including the range dates for the week
 	 *		array['start_date'], and array['end_date']
 	 */
-	protected function getRangeDatesForWeek($week, $year) {
+	public static function getRangeDatesForWeek($week, $year) {
 		$return = array(); 
 
 		// calc start & end timestamps for individual day html
@@ -106,18 +105,17 @@ class Timesheet {
 		return $return;
 	}
 	
-	/**
-	 *	Get html for a view rendered with data parameters
-	 *	@param string $view_template - filename of view template to render
-	 *	@param array $data - array of variables to render with view
-	 */
-	protected function renderView($view_template, $data) {
-		extract($data);
-		extract($this->_view_globals);
-		ob_start();
-		include 'views/'.$view_template.'.php';
-		$html = ob_get_contents();
-		ob_end_clean();
-		return $html;
+	public static function getDatesForWeek($week, $year) {
+		$dates = array();
+		$date_range = self::getRangeDatesForWeek($week, $year);
+		// init cur_date for looping days and building days in week
+		$cur_date = $date_range['start_date'];
+		while ($cur_date <= $date_range['end_date']) {
+			// add current date to columns arr
+			$dates[]= $cur_date; 
+			// increment cur_date by a day
+			$cur_date = date('Y-m-d', strtotime($cur_date.' +1 day'));
+		}
+		return $dates;
 	}
 }
