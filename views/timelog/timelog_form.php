@@ -61,10 +61,3 @@
 	
 	<p class="loading hidden">Loading.<blink>.</blink></p>
 </form>
-<?php if ($sidebar_form): ?>
-<script type="text/javascript">
-$(document).ready(function(){
-	initSidebarForm();
-});
-</script> 
-<?php endif ?>

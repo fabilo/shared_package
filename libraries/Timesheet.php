@@ -26,8 +26,9 @@ class Timesheet {
 		$week_range_dates = $this->getRangeDatesForWeek($week, $year);
 		
 		// get total hours for week html
-		$week_hours = $this->_timelog_factory->getTotalHoursForWeek($week);
+		$week_hours = $this->_timelog_factory->getTotalHoursForWeek($year, $week);
 		$html = $this->renderView('timelog/week_table_row', array(
+			'year'=>$year,
 			'week'=>$week, 
 			'week_hours'=>$week_hours, 
 			'start_date' => $week_range_dates['start_date'], 

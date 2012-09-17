@@ -1,4 +1,4 @@
-<tr id="<?php echo $day->date ?>" class="day-total <?php echo ($expand_timelogs) ? 'expanded': 'collapsed' ?>">
+<tr id="<?php echo $day->date ?>" class="day-total <?php echo ($expand_timelogs) ? 'expanded': 'collapsed' ?>" rel="week<?php echo $day->year_week ?>">
 	<td class="date align-right"><?php echo $day->getDateNice() ?></td>
 	<td class="start-time time"><?php echo $day->getStartTimeNice() ?></td>
 	<td class="end-time time"><?php echo $day->getEndTimeNice() ?></td>

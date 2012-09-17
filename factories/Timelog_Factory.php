@@ -94,7 +94,8 @@ class Timelog_Factory extends Base_PDO_Factory {
 		
 		// prepare query
 		$smt = $this->_db->prepare("
-			SELECT date, MIN(start_time) AS start_time, MAX(end_time) AS end_time, SUM(hours) AS hours 
+			SELECT date, MIN(start_time) AS start_time, MAX(end_time) AS end_time, SUM(hours) AS hours, 
+			 CONCAT(YEAR(MIN(date)),'-',WEEK(MIN(date))) AS year_week
 			FROM ".self::$_table_name."
 			WHERE user_id = ? AND date >= ? AND date <= ?
 			GROUP BY date
@@ -138,24 +139,28 @@ class Timelog_Factory extends Base_PDO_Factory {
 	
 	/**
 	 * Get total amount of hours for a week
+	 *	@param int $start_week - first week to return hours for
+	 *	@param int $end_week - (optional) end of range to return total hours for weeks
+	 *	@return array of timelog objects 
 	 */
-	public function getTotalHoursForWeek($start_week, $end_week=null) {
+	public function getTotalHoursForWeek($year, $start_week, $end_week=null) {
 		// query params 
 		$params = array(
-			$this->_user_id
+			$this->_user_id, 
+			$year
 		);
 		
 		// check if end_week argument was passed
 		if ($end_week) {
 			// end week argument was passed 
-			$where = "DATE_FORMAT(date, '%v') >= ? AND DATE_FORMAT(date, '%v') <= ?";
+			$where = " (YEAR(date) = ? AND DATE_FORMAT(date, '%v') >= ? AND DATE_FORMAT(date, '%v') <= ?) ";
 			// add to query params array
 			$params[]= (int) $start_week; 
 			$params[]= (int) $end_week;
 		}
 		else {
 			// no end_week paramter value, 
-			$where = "DATE_FORMAT(date, '%v') = ?";
+			$where = " (YEAR(date) = ? AND DATE_FORMAT(date, '%v') = ?) ";
 			// add to query params array 
 			$params[]= (int) $start_week;
 		}
