@@ -7,7 +7,8 @@ class Project extends AbstractEntity {
 		$department_id = 0, 
 		$team_id = 0, 
 		$archived = 0,
-		$description; 
+		$description, 
+		$clarity_reference;
 
 	// local objects
 	protected $department, 

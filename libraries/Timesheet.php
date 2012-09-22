@@ -17,7 +17,7 @@ class Timesheet extends Base_Render_Library {
 	 *	@param int $week - Week to get timelog totals for
 	 *	@param int $year - Year to get timelog totals for
 	 */
-	public function getTotalHoursTableRowHtmlForWeek($week, $year=null, $expand_first_row=false) {
+	public function getTimelogsTableHtmlForWeek($week, $year=null, $expand_first_row=false) {
 		// default year to this year if not passed
 		if (!$year) $year = Date('Y');
 		
@@ -85,6 +85,13 @@ class Timesheet extends Base_Render_Library {
 		$data['projects'] = $this->_user->getVisibleProjects($this->_project_factory);
 		$data['categories'] = $this->_user->getVisibleTimelogCategories($this->_timelog_categories_factory);
 		return $this->renderView('timelog/timelog_form', $data);
+	}
+
+	/*** Timelog Category Functions ***/
+	
+	public function getCategoryTableHtml() {
+		$data['categories'] = $this->_user->getVisibleTimelogCategories($this->_timelog_categories_factory);
+		return $this->renderView('timelog_categories/list_table', $data);
 	}
 
 	/**

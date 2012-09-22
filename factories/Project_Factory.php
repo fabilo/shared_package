@@ -32,11 +32,11 @@ class Project_Factory extends Base_PDO_Factory  implements Project_Factory_Inter
 	 */
 	public function insert(Project $obj) {
 		$smt = $this->_db->prepare(
-			"INSERT INTO ".self::$_table_name." (`name`, `department_id`, `team_id`, `description`, `archived`, `created_ts`, `modified_ts`) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)"
+			"INSERT INTO ".self::$_table_name." (`name`, `department_id`, `team_id`, `description`, `clarity_reference`, `archived`, `created_ts`, `modified_ts`) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)"
 		);
 		
 		$smt->execute(array(
-			$obj->name, $obj->department_id, $obj->team_id, $obj->description, $obj->archived
+			$obj->name, $obj->department_id, $obj->team_id, $obj->description, $obj->clarity_reference, $obj->archived
 		));
 		
 		// return timelog id
@@ -50,11 +50,11 @@ class Project_Factory extends Base_PDO_Factory  implements Project_Factory_Inter
 	 */
 	public function update(Project $obj) {
 		$smt = $this->_db->prepare(
-			"UPDATE ".self::$_table_name." SET `name` = ?, `department_id` = ?, `team_id` = ?, `archived` = ?, `description` = ?, modified_ts = CURRENT_TIMESTAMP WHERE id = ?"
+			"UPDATE ".self::$_table_name." SET `name` = ?, `department_id` = ?, `team_id` = ?, `archived` = ?, `clarity_reference` = ?, `description` = ?, modified_ts = CURRENT_TIMESTAMP WHERE id = ?"
 		);
 		
 		return (bool) $smt->execute(array(
-			$obj->name, $obj->department_id, $obj->team_id, $obj->archived, $obj->description, $obj->id
+			$obj->name, $obj->department_id, $obj->team_id, $obj->archived, $obj->clarity_reference, $obj->description, $obj->id
 		));
 	}
 	

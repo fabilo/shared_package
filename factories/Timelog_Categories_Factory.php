@@ -20,8 +20,9 @@ class Timelog_Categories_Factory extends Base_PDO_Factory implements Timelog_Cat
 	 */
 	public function get() {
 		$smt = $this->_db->prepare(
-			'SELECT * 
-			FROM '.self::$_table_name.' 
+			'SELECT c.*, d.name AS department
+			FROM '.self::$_table_name.' c
+			JOIN '.Department_Factory::$_table_name.' d ON (c.department_id = d.id)
 			WHERE (department_id = ?)
 			ORDER BY name ASC'
 		);
@@ -36,9 +37,10 @@ class Timelog_Categories_Factory extends Base_PDO_Factory implements Timelog_Cat
 	 */
 	public function getByDepartment($department_id) {
 		$smt = $this->_db->prepare(
-			'SELECT * 
-			FROM '.self::$_table_name.' 
-			WHERE (department_id = ?)
+			'SELECT c.*, d.name AS department 
+			FROM '.self::$_table_name.' c
+			JOIN '.Department_Factory::$_table_name.' d ON (c.department_id = d.id)
+			WHERE (c.department_id = ?)
 			ORDER BY name ASC'
 		);
 		$smt->execute(array($department_id));
