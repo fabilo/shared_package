@@ -9,12 +9,12 @@
  *	variables to the class and can start validating without defining redundant methods. 
  *
  *	Also, keeping the class variables as public and static, we can leverage them in other places (eg: for html5 input validation) 
- *	by simply calling the field name statically; <input pattern="<?php echo Base_Validator::$owner_number_pattern ?>" />
+ *	by simply calling the field name statically; <input pattern="<?php echo ValidatorUtil::$owner_number_pattern ?>" />
  *
  *	@Author: fabian.snaith@wyn.com
  *	@Date:	2021-08-24
  */
-class Base_Validator {
+class ValidatorUtil {
 	// owner number pattern - used by WMSP owner payment form
 	public static $owner_number_pattern = '^\d{11}$';
 	// finance payment contract number - used by WMSP levy payment form
@@ -27,13 +27,17 @@ class Base_Validator {
 	public static $full_name_pattern = '^(\w|\s|\'|\.|-)+$';
 	// monetary amount
 	public static $monetary_amount_pattern = '^\d+(\.\d{1,2})*$';
+	// mysql date
+	public static $mysql_date_pattern = '^\d{4}-\d{2}-\d{2}$'; 
+	// mysql datetime
+	public static $mysql_datetime_pattern = '^\d{4}-\d{2}-\d{2} 2[0-3]|[01][0-9]:[0-5][0-9]$';
 
 	/** 
 	 *	Magic PHP5 method to catch validate method calls 
 	 *
 	 *	This method is only called when a method is called on this class that doesn't exist. 
 	 *	This way we don't have to create multiple calls for a simple validate call
-	 *	Throws an Invalid_Input_Exception is validation fails
+	 *	Throws an InvalidInputException is validation fails
 	 *	We could set this up for static method calls if we had php >= 5.3
 	 *	@param	string	$name - name of function called on class
 	 *	@param	array	$arguments - array of arguments passed to method
@@ -43,7 +47,7 @@ class Base_Validator {
 	public function __call($name, $arguments) {
 		// check function name starts with 'validate' eg: validateOwnerNumber(12345678901)
 		if (!(substr($name, 0, strlen('validate')) == 'validate')) {
-			throw new Exception($name.' method doesn\'t exist for class Base_Validator'); 
+			throw new Exception($name.' method doesn\'t exist for class ValidatorUtil'); 
 		}
 
 		// generate varname from method name, ie: validateOwnerNumber -> owner_number
@@ -53,8 +57,8 @@ class Base_Validator {
 		$this_field_name = $field_name.'_pattern';
 
 		// now check that pattern field name exists for this class
-		if (!in_array($this_field_name, array_keys(get_class_vars('Base_Validator')))) {
-			throw new Exception($field_name.' field name not found for class Base_Validator.');
+		if (!in_array($this_field_name, array_keys(get_class_vars('ValidatorUtil')))) {
+			throw new Exception($field_name.' field name not found for class ValidatorUtil.');
 		}
 
 		// set label from 2nd argument else $field_name - used in error message
@@ -68,7 +72,7 @@ class Base_Validator {
 
 	/**
 	 *	Validate string with a regex pattern
-	 *	Throws an Invalid_Input_Exception if validation fails
+	 *	Throws an InvalidInputException if validation fails
 	 *	@param String $subject - subject to match against pattern with regex
 	 *	@param String $pattern - regex pattern to use for matching
 	 *	@param String $field_name (optional) - title/label for $subject param, used for error message
@@ -79,7 +83,7 @@ class Base_Validator {
 			// build error message
 			$error_message = 'Invalid value'; 
 			if ($field_name) $error_message .= ' set for '.$field_name;
-			throw new Invalid_Input_Exception($error_message);
+			throw new InvalidInputException($error_message);
 		}
 		return true; // validation passed
 	}

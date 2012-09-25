@@ -11,7 +11,7 @@ class Base_Render_Library {
 		extract($data);
 		extract($this->_view_globals);
 		ob_start();
-		include 'views/'.$view_template.'.php';
+		include $view_template.'.php';
 		$html = ob_get_contents();
 		ob_end_clean();
 		return $html;

@@ -3,9 +3,7 @@
  * 	This file contains a class to handle logic for working with the current_timestamp object 
  *	displayed in the right hand side of the template. 
  */
-require_once('libraries/base/Base_Auth_Controller.php');
-
-class Current_Timelog_Form_Controller extends Base_Auth_Controller {
+class Current_Timelog_Form_Controller extends Base_CI_Auth_Controller {
 	protected $_timesheet, 
 		$_admin_db, 
 		$_timelog_factory;
