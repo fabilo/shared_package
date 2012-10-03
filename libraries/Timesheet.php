@@ -5,9 +5,11 @@ class Timesheet extends Base_Render_Library {
 		$_timelog_categories_factory, 
 		$_user;
 	
-	public function __construct($timelog_factory, $project_factory, $timelog_categories_factory, $user) {
+	public function __construct($timelog_factory, $project_factory, $timelog_categories_factory, $department_factory, $team_factory, $user) {
 		$this->_timelog_factory = $timelog_factory;
 		$this->_project_factory = $project_factory;
+		$this->_department_factory = $department_factory;
+		$this->_team_factory = $team_factory;
 		$this->_timelog_categories_factory = $timelog_categories_factory;
 		$this->_user = $user;
 	}
@@ -95,6 +97,23 @@ class Timesheet extends Base_Render_Library {
 	}
 
 	/**
+	 * Get html form for a timelog category
+	 * @param Category $category - category to use in the form 
+	 * @return html form for category
+	 */
+	public function getCategoryFormHtml($category=null) {
+		if (!$category) $category = new Timelog_Category();
+
+		$data = array(
+			'category' => $category,
+			'departments' => $this->_user->getVisibleDepartments($this->_department_factory),
+			'teams' => $this->_user->getVisibleTeams($this->_team_factory)
+		);
+
+		return $this->renderView('timelog_categories/form', $data);
+	}
+
+	/**
 	 *	Get array of start and end dates for a week
 	 *	@param int $week - week to return dates for
 	 *	@return array including the range dates for the week
@@ -124,5 +143,34 @@ class Timesheet extends Base_Render_Library {
 			$cur_date = date('Y-m-d', strtotime($cur_date.' +1 day'));
 		}
 		return $dates;
+	}
+
+	
+	/*** Project Functions ***/
+	
+	/**
+	 * Get html table of projects visible to user
+	 * @return html table of projects 
+	 */
+	public function getProjectTableHtml() {
+		$data['projects'] = $this->_user->getVisibleProjects($this->_project_factory, $showArchived=true);
+		return $this->renderView('projects/list_table', $data);
+	}
+	
+	/**
+	 * Get html form for a project
+	 * @param Project $project - project to use in the form 
+	 * @return html form for project
+	 */
+	public function getProjectFormHtml($project=null) {
+		if (!$project) $project = new Project();
+		
+		$data = array(
+			'project' => $project,
+			'departments' => $this->_user->getVisibleDepartments($this->_department_factory),
+			'teams' => $this->_user->getVisibleTeams($this->_team_factory)
+		);
+		
+		return $this->renderView('projects/form', $data);
 	}
 }

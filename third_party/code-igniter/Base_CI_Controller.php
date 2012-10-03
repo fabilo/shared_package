@@ -14,7 +14,8 @@ class Base_CI_Controller extends CI_Controller {
 		parent::__construct();
 		session_start();
 		
-		$this->_uri_segment = $this->uri->segments[1]; // define url segment for controller
+		if (isset($this->uri->segments[1]))
+			$this->_uri_segment = $this->uri->segments[1]; // define url segment for controller
 				
 		// flag if ajax request
 		$this->_isAjax = $this->input->is_ajax_request();
@@ -23,7 +24,7 @@ class Base_CI_Controller extends CI_Controller {
 		$this->_view_globals = array(
 			'ajax' => $this->_isAjax, // whether request is an ajax request or not
 			'top_uri' => site_url($this->_uri_segment), // this current controller name (eg: timelogs)
-			'base_uri' => dirname(site_url()).'/' // base url (eg: http://admin)
+			'base_uri' => $this->config->item('base_url') // base url (eg: http://admin)
 		);
 		
 		// get flash messages from previous request

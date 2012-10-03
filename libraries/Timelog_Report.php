@@ -1,6 +1,4 @@
 <?php
-require_once('libraries/base/Base_Render_Library.php');
-require_once('libraries/Timesheet.php');
 class Timelog_Report extends Base_Render_Library {
 	protected $_timelog_factory;
 	

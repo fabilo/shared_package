@@ -29,7 +29,7 @@ class AbstractEntity
     // fields
     public function __call($method, $arguments) {
         if (strlen($method) < 3) {
-            throw new Bad_Method_Call_Exception(
+            throw new BadMethodCallException(
                 "The mutator or accessor '$method' is not valid for this entity.");
         }
 				// extract field name from method name
@@ -47,11 +47,11 @@ class AbstractEntity
     public function setId($id) {
 			$id = $id*1;
         if ($this->id !== null) {
-            throw new Bad_Method_Call_Exception(
+            throw new BadMethodCallException(
                 "The ID for this entity has been set already.");
         }
         if (!is_int($id) || $id < 1) {
-            throw new Invalid_Argument_Exception(
+            throw new InvalidArgumentException(
               "The ID for this entity is invalid.".is_int($id));
         }
         $this->id = $id;
@@ -93,7 +93,7 @@ class AbstractEntity
     // Check if the given field exists in the entity
     protected function checkField($field) {
         if (!property_exists($this, $field)) {
-            throw new Invalid_Argument_Exception(
+            throw new InvalidArgumentException(
                 "Setting or getting the field '$field' is not valid for this entity.");
         }
 				return true;
@@ -102,11 +102,11 @@ class AbstractEntity
     // Validate and sanitize a string
     protected function sanitizeString($value, $min = 2, $max = null) {
         if (!is_string($value) || empty($value)) {
-            throw new Invalid_Argument_Exception(
+            throw new InvalidArgumentException(
               "The value of the current field must be a non-empty string.");
         }
         if (strlen($value) < (integer) $min || $max ? strlen($value) > (integer) $max : false) {
-            throw new Invalid_Argument_Exception(
+            throw new InvalidArgumentException(
               "Trying to assign an invalid string to the current field.");
         }
         return htmlspecialchars(trim($value), ENT_QUOTES);
@@ -116,7 +116,7 @@ class AbstractEntity
 		$time = trim($time);
 		$time = str_replace(':', '', $time);
 		if (!preg_match('/^[0-2]?[0-9][0-5][0-9]$/', $time)) {
-			throw new Invalid_Argument_Exception(
+			throw new InvalidArgumentException(
           "Trying to assign invalid time (".$time.") for ".get_class($this));
 		}
 		return $time;

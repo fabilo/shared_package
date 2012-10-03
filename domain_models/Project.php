@@ -10,17 +10,13 @@ class Project extends AbstractEntity {
 		$description, 
 		$clarity_reference;
 
-	// local objects
-	protected $department, 
-		$team;
-
 	public function validate() {
 		// validate name
-		if (!preg_match('/^(\w|\s|\d){3,}$/', $this->name)) throw new Invalid_Input_Exception('Invalid name set for Project');
+		if (!preg_match('/^(\w|\s|\d){3,}$/', $this->name)) throw new InvalidInputException('Invalid name set for Project');
 		// validate department_id 
-		if (!preg_match('/^\d+$/', $this->department_id)) throw new Invalid_Input_Exception('Invalid department_id set for Project');
+		if (!preg_match('/^\d+$/', $this->department_id)) throw new InvalidInputException('Invalid department_id set for Project');
 		// validate team_id 
-		if (!preg_match('/^\d+$/', $this->team_id)) throw new Invalid_Input_Exception('Invalid team_id set for Project');
+		if (!preg_match('/^\d+$/', $this->team_id)) throw new InvalidInputException('Invalid team_id set for Project');
 		return true;
 	}
 }

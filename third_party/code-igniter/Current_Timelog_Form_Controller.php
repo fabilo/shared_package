@@ -22,6 +22,8 @@ class Current_Timelog_Form_Controller extends Base_CI_Auth_Controller {
 			$this->_timelog_factory,
 			new Project_Factory($this->_admin_db), 
 			new Timelog_Categories_Factory($this->_admin_db),
+			new Department_Factory($this->_admin_db),
+			new Team_Factory($this->_admin_db),
 			$this->_user
 		);
 		$this->_timesheet->_view_globals = $this->_view_globals;

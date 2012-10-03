@@ -46,4 +46,37 @@ class Timelog_Categories_Factory extends Base_PDO_Factory implements Timelog_Cat
 		$smt->execute(array($department_id));
 		return $smt->fetchAll(PDO::FETCH_CLASS, self::$_fetch_class);
 	}
+	
+	/**
+	 * 	Insert Timelog_Category
+	 *	@param Timelog_Category $obj - project object containing values to insert into db
+	 *	@return Int auto increment id of project just inserted
+	 */
+	public function insert(Timelog_Category $obj) {
+		$smt = $this->_db->prepare(
+			"INSERT INTO ".self::$_table_name." (`name`, `department_id`, `clarity_reference`, `created_ts`, `modified_ts`) VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)"
+		);
+
+		$smt->execute(array(
+			$obj->name, $obj->department_id, $obj->clarity_reference
+		));
+
+		// return timelog id
+		return (int) $this->_db->lastInsertId();
+	}
+
+	/**
+	 *	Update Timelog_Category in database
+	 *	@param Timelog_Category $obj - project object to update in the database
+	 *	@return Boolean if update was successful
+	 */
+	public function update(Timelog_Category $obj) {
+		$smt = $this->_db->prepare(
+			"UPDATE ".self::$_table_name." SET `name` = ?, `department_id` = ?, `clarity_reference` = ?, modified_ts = CURRENT_TIMESTAMP WHERE id = ?"
+		);
+
+		return (bool) $smt->execute(array(
+			$obj->name, $obj->department_id, $obj->clarity_reference, $obj->id
+		));
+	}
 }
