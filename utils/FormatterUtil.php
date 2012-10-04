@@ -9,4 +9,8 @@ class FormatterUtil {
 	public static function stringForCssSelector($string) {
 		return preg_replace('/![a-zA-Z\-_0-9]/', '', $string);
 	}
+
+	public static function mysqlDateForTableHeading($date) {
+		return date('D\<\b\r\>j/m', strtotime($date));
+	}
 }

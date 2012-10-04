@@ -1,7 +1,7 @@
 <table class="report list">
 	<thead>
 		<tr>
-			<?php foreach ($columns AS $col): ?><th><?php echo $col ?></th><?php endforeach ?>
+			<?php foreach ($columns AS $col): ?><th><?php echo (preg_match('/'.ValidatorUtil::$mysql_date_pattern.'/', $col)) ? FormatterUtil::mysqlDateForTableHeading($col) : $col ?></th><?php endforeach ?>
 		</tr>
 	</thead>
 	<tbody>
