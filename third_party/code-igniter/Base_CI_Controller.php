@@ -6,6 +6,7 @@ class Base_CI_Controller extends CI_Controller {
 	protected $_view_globals = array();
 	protected $_meta_title;
 	protected $_heading; 
+	protected $_message;
 	protected $_body;
 	protected $_javascript_includes = array();
 	protected $_flash_messages = array();
@@ -67,6 +68,8 @@ class Base_CI_Controller extends CI_Controller {
 		$data['meta_title'] = $this->_meta_title;
 		// heading for page to be displayed at top of view
 		$data['heading'] = $this->_heading;
+		// feedback message 
+		$data['message'] = $this->_message;
 		// body to displayed in the layout view
 		$data['body'] = $this->_body; 
 		

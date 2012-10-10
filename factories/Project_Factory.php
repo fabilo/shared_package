@@ -32,7 +32,7 @@ class Project_Factory extends Base_PDO_Factory  implements Project_Factory_Inter
 	 */
 	public function insert(Project $obj) {
 		$smt = $this->_db->prepare(
-			"INSERT INTO ".self::$_table_name." (`name`, `department_id`, `team_id`, `description`, `clarity_reference`, `archived`, `created_ts`, `modified_ts`) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)"
+			"INSERT INTO ".self::$_table_name." (`name`, `department_id`, `team_id`, `description`, `clarity_reference`, `archived`, `created_ts`, `modified_ts`) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)"
 		);
 		
 		$smt->execute(array(
