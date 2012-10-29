@@ -1,3 +1,7 @@
+<?php if(isset($startDate) && isset($endDate)): ?>
+<input type="hidden" id="startDate" value="<?php echo $startDate ?>"/>
+<input type="hidden" id="endDate" value="<?php echo $endDate ?>"/>
+<?php endif ?>
 <table id="TimelogList" class="table list">
 	<thead>
 	<tr class="headings">

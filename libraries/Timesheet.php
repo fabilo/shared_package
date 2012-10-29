@@ -46,7 +46,11 @@ class Timesheet extends Base_Render_Library {
 			}
 		}
 		
-		return $this->renderView('timelog/list_table', array('html'=>$html));
+		return $this->renderView('timelog/list_table', array(
+			'html'=>$html, 
+			'startDate'=>$week_range_dates['start_date'], 
+			'endDate'=>$week_range_dates['end_date']
+		));
 	}
 	
 	/**
