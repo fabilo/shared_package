@@ -55,7 +55,7 @@
 			<input class="col2 button" name="submit" type="Submit" value="Cancel"/>
 			<input class="col2 button" name="submit" type="Submit" value="Save"/>
 			<?php if (!$ajax && !$sidebar_form): ?>
-			<input class="block red" name="submit" onclick="return confirm('Are you sure you want to delete timelog?')" type="Submit" value="Delete"/>
+			<input class="block red button" name="submit" onclick="return confirm('Are you sure you want to delete timelog?')" type="Submit" value="Delete"/>
 			<?php endif ?>
 	</div>
 	
