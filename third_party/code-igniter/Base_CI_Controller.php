@@ -23,6 +23,7 @@ class Base_CI_Controller extends CI_Controller {
 		
 		// setup view global variables
 		$this->_view_globals = array(
+			'uri_segments' => $this->uri->segments,
 			'ajax' => $this->_isAjax, // whether request is an ajax request or not
 			'top_uri' => site_url($this->_uri_segment), // this current controller name (eg: timelogs)
 			'base_uri' => $this->config->item('base_url') // base url (eg: http://admin)

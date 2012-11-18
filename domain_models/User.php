@@ -5,25 +5,6 @@ class User extends AbstractEntity implements User_Interface {
 		$department_id;
 	
 	public function __construct() {
-		if ($_SERVER['HTTP_HOST'] == 'fabilo.local') $_SERVER['REMOTE_ADDR'] = '10.56.205.16';
-		
-		switch ($_SERVER['REMOTE_ADDR']) {
-				case '10.56.205.16': 
-				case '10.56.195.54':
-					$this->team_id = 2;
-					$this->department_id = 1;
-					$this->id = 1;
-					break;
-				case '10.56.195.5': 
-					$this->team_id = 1;
-					$this->department_id = 1;
-					$this->id = 2;
-					break;
-				default: 
-					echo $_SERVER['REMOTE_ADDR'];
-					die('Unauthorized user!');
-					break;
-		}
 	}
 
 	/** Get ID for user 

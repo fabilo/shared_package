@@ -11,9 +11,6 @@ class Current_Timelog_Form_Controller extends Base_CI_Auth_Controller {
 	public function __construct() {
 		parent::__construct();
 		
-		// setup admin db
-		$this->load->database();
-		$this->_admin_db = new PDO('mysql:host='.$this->db->hostname.';dbname=admin', $this->db->username, $this->db->password);
 		// define timelog factory
 		$this->_timelog_factory = new Timelog_Factory($this->_admin_db, $this->_user->getId());
 		
@@ -40,5 +37,6 @@ class Current_Timelog_Form_Controller extends Base_CI_Auth_Controller {
 		$this->_view_globals['current_timelog_form'] = $this->_timesheet->getTimelogFormHtml($timelog, array('sidebar_form'=>true));
 		// include form.js for sidebar form
 		$this->_javascript_includes[]= 'timelog_form';
+		$this->_javascript_includes[]= 'global';
 	}
 }
