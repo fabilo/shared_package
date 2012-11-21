@@ -14,6 +14,8 @@ class Timelog_Report extends Base_Render_Library {
 			$columns = array('Category');
 			// get start & end dates for week
 			$columns = array_merge($columns, Timesheet::getDatesForWeek($week, $year));
+			// add total column to end
+			$columns[]= 'Total';
 
 			// format data into rows array
 			$rows = array();
@@ -23,6 +25,8 @@ class Timelog_Report extends Base_Render_Library {
 				if (!array_key_exists($timelog['category'], $rows)) $rows[$timelog['category']] = array('Category'=>$timelog['category']);
 				// insert hours for day & category
 				$rows[$timelog['category']][$timelog['date']] = $timelog['hours'];
+				// add to total column
+				@$rows[$timelog['category']]['Total'] += $timelog['hours'];
 			}
 			// sort rows array by key
 			ksort($rows); 

@@ -204,7 +204,9 @@ class Timelog_Factory extends Base_PDO_Factory {
 	 *	@return array of rowsets for the result
 	 */
 	public function getCategoryHoursForClarity($year, $week) {
+		// get results and insert into temporary table
 		$q = "
+			CREATE TEMPORARY TABLE CategoryHoursForClarity
 			SELECT t.date, SUM(t.hours) AS hours, IFNULL(p.clarity_reference, IFNULL(p.name, IFNULL(c.clarity_reference, c.name))) AS category
 			FROM ".self::$_table_name." t
 			LEFT JOIN ".Project_Factory::$_table_name." p ON p.id = t.project_id
@@ -213,16 +215,23 @@ class Timelog_Factory extends Base_PDO_Factory {
 			AND YEAR(date) = ?
 			AND WEEK(date) = ?
 			GROUP BY date, category
-			ORDER BY date, category";		
-		$smt = $this->_db->prepare($q);
-		
+			ORDER BY date, category";	
+		$smt = $this->_db->prepare($q);		
 		$smt->execute(array(
 			$this->_user_id,
 			$year, 
 			$week
 		));
+
+		$q = "SELECT * FROM CategoryHoursForClarity";	
+		$smt = $this->_db->prepare($q);		
+		$smt->execute();
 		return $smt->fetchAll();		
 	}
+
+	/**
+	 * Get total column 
+	 */
 	
 	/**
 	 * Get total hours per day

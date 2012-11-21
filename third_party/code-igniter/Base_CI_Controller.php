@@ -30,7 +30,7 @@ class Base_CI_Controller extends CI_Controller {
 		);
 		
 		// add demo to view globals
-		if ($this->config->config['demo']) $this->_view_globals['demo'] = true;
+		if (isset($this->config->config['demo']) && $this->config->config['demo']) $this->_view_globals['demo'] = true;
 		
 		// get flash messages from previous request
 		if (isset($_SESSION['flash_messages'])) $this->_flash_messages = $_SESSION['flash_messages'];
