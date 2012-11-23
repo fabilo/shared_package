@@ -198,15 +198,13 @@ class Timelog_Factory extends Base_PDO_Factory {
 	}
 	
 	/**
-	 * Get total hours per day for each project larity name
+	 * Get total hours per day for each project clarity name
 	 *	@param int year - year to get timelogs for
 	 *	@param int week - week to get timelogs for
 	 *	@return array of rowsets for the result
 	 */
-	public function getCategoryHoursForClarity($year, $week) {
-		// get results and insert into temporary table
+	public function getCategoryHoursForClarityPerDay($year, $week) {
 		$q = "
-			CREATE TEMPORARY TABLE CategoryHoursForClarity
 			SELECT t.date, SUM(t.hours) AS hours, IFNULL(p.clarity_reference, IFNULL(p.name, IFNULL(c.clarity_reference, c.name))) AS category
 			FROM ".self::$_table_name." t
 			LEFT JOIN ".Project_Factory::$_table_name." p ON p.id = t.project_id
@@ -222,16 +220,33 @@ class Timelog_Factory extends Base_PDO_Factory {
 			$year, 
 			$week
 		));
-
-		$q = "SELECT * FROM CategoryHoursForClarity";	
-		$smt = $this->_db->prepare($q);		
-		$smt->execute();
 		return $smt->fetchAll();		
 	}
 
 	/**
-	 * Get total column 
+	 * Get total hours per day for each timelog category
+	 *	@param int year - year to get timelogs for
+	 *	@param int week - week to get timelogs for
+	 *	@return array of rowsets for the result
 	 */
+	public function getCategoryHoursPerDay($year, $week) {
+		$q = "
+			SELECT t.date, SUM(t.hours) AS hours, c.name AS category
+			FROM ".self::$_table_name." t
+			LEFT JOIN ".Timelog_Categories_Factory::$_table_name." c ON c.id = t.category_id
+			WHERE user_id = ?
+			AND YEAR(date) = ?
+			AND WEEK(date) = ?
+			GROUP BY date, category
+			ORDER BY date, category";	
+		$smt = $this->_db->prepare($q);		
+		$smt->execute(array(
+			$this->_user_id,
+			$year, 
+			$week
+		));
+		return $smt->fetchAll();
+	}
 	
 	/**
 	 * Get total hours per day
